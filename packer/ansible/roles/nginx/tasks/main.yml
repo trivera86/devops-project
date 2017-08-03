@@ -1,0 +1,37 @@
+---
+
+- name: "Install Nginx."
+  yum:
+    name: nginx
+    state: installed
+
+- name: "Create directory for certs"
+  file:
+      path: /etc/nginx/ssl
+      state: directory
+
+- name: "Copy over cert"
+  copy:
+      src: ./certs/nginx-selfsigned.crt
+      dest: /etc/nginx/ssl/server.crt
+
+- name: "Copy over key"
+  copy:
+      src: ./certs/nginx-selfsigned.key
+      dest: /etc/nginx/ssl/server.key
+
+- name: "Configure Nginx."
+  copy:
+    src: ./templates/nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: "Upload web assets"
+  copy:
+    src: ./templates/index.html
+    dest: /usr/share/nginx/html/index.html
+
+- name: "Restart Nginx."
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes

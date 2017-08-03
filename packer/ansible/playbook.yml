@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: true    # gather OS info that is made available for tasks/roles
+  become: yes           # majority of CIS tasks require root
+  vars:
+    logs:
+      - file: /var/log/nginx/access.log
+        group_name: "nginx"
+        stream_name: "NginxLogStream"
+      - file: /var/log/nginx/error.log
+        group_name: "nginx"
+        stream_name: "NginxLogStream"
+  roles:
+    - nginx
+    - dharrisio.aws-cloudwatch-logs-agent

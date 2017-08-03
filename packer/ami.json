@@ -1,0 +1,55 @@
+{
+  "variables": {
+    "access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `access_key`}}",
+    "secret_key": "{{user `secret_key`}}",
+    "region": "us-east-1",
+    "source_ami_filter": {
+        "filters": {
+            "virtualization-type": "hvm",
+            "name": "amzn-ami*-ebs",
+            "root-device-type": "ebs"
+        },
+        "owners": ["amazon"],
+        "most_recent": true
+    },
+    "instance_type": "t2.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "devops-project {{timestamp}}"
+  }],
+  "provisioners": [
+    {
+        "type": "shell",
+        "inline": [
+            "sudo pip install ansible"
+        ]
+    },
+    {
+        "type": "ansible-local",
+        "playbook_dir": "ansible",
+        "playbook_file": "ansible/playbook.yml",
+        "role_paths": [
+            "ansible/roles/nginx"
+        ],
+        "galaxy_file": "ansible/requirements.yml"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "rm .ssh/authorized_keys ; sudo rm /root/.ssh/authorized_keys"
+      ]
+    },
+    {
+      "type": "goss",
+      "version": "0.3.4",
+      "tests": [
+          "goss/goss.yaml"
+      ]
+    }
+
+  ]
+}

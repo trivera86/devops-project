@@ -1,0 +1,19 @@
+package:
+  nginx:
+    installed: true
+
+file:
+  /etc/nginx/ssl/server.crt:
+    exists: true
+    sha256: ab10335060d2d16dd47dc4f3f07ea1934cf264dbdecfd709a793327e86f01702
+
+file:
+  /etc/nginx/ssl/server.key:
+      exists: true
+      sha256: f2694e6c8876864b312392fdb085fb64d6c68474a8adc220f30a053e3e493d88
+
+http:
+  https://localhost:
+    status: 200
+    allow-insecure: true
+    body: ["Hello World"]
